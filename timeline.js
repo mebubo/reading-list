@@ -38,9 +38,23 @@ chrome.storage.local.get('readingList', data => {
         timestamp.classList.add('timestamp');
         timestamp.textContent = formatTime(page.time);
 
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('delete-button');
+        deleteButton.textContent = '\u2716';
+
+        deleteButton.addEventListener('click', () => {
+          const filtered = readingList.filter(item => !(item.url === page.url && item.time == page.time));
+          // const index = readingList.findIndex(item => item.url === page.url && item.time == page.time);
+          // readingList.splice(index, 1);
+          chrome.storage.local.set({ readingList: filtered });
+          listItem.remove();
+        });
+
+
+        listItem.appendChild(deleteButton);
+        listItem.appendChild(timestamp);
         listItem.appendChild(favicon);
         listItem.appendChild(link);
-        listItem.appendChild(timestamp);
         listContainer.appendChild(listItem);
     }
 });

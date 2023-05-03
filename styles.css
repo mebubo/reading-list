@@ -37,6 +37,10 @@ body {
     margin-bottom: 10px;
 }
 
+.priority-view .list-item {
+    align-items: start;
+}
+
 .list-item img {
     width: 16px;
     height: 16px;
@@ -46,5 +50,9 @@ body {
 .timestamp {
     font-size: 12px;
     color: #888;
-    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.delete-button {
+    margin-right: 5px;
 }

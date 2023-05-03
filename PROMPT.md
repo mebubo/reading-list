@@ -66,6 +66,56 @@ In priority.js, retrieve the list of saved pages from the local storage, calcula
 
 Use Chrome's local storage to store the reading list. The key should be the page URL and the value should be an object containing the page's title, favicon, and an array of timestamps when the page was saved.
 
-Your task is to implement step 1. Just write the code, don't explain. Remember,
-there should be a popup with 4 itmes to chose from. And there should be 2
-extension pages, timeline view and priority view.
+
+Here is our current timeline.js:
+
+```
+function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function formatTime(timestamp) {
+    const date = new Date(timestamp);
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
+chrome.storage.local.get('readingList', data => {
+    const readingList = data.readingList || [];
+    const listContainer = document.getElementById('list-container');
+    const sortedReadingList = readingList.sort((a, b) => b.time - a.time);
+
+    let currentDate = '';
+
+    for (const page of sortedReadingList) {
+        const pageDate = formatDate(page.time);
+        if (pageDate !== currentDate) {
+            currentDate = pageDate;
+            const dateHeader = document.createElement('h2');
+            dateHeader.textContent = currentDate;
+            listContainer.appendChild(dateHeader);
+        }
+
+        const listItem = document.createElement('div');
+        listItem.classList.add('list-item');
+
+        const favicon = document.createElement('img');
+        favicon.src = page.favicon;
+
+        const link = document.createElement('a');
+        link.href = page.url;
+        link.textContent = page.title;
+
+        const timestamp = document.createElement('span');
+        timestamp.classList.add('timestamp');
+        timestamp.textContent = formatTime(page.time);
+
+        listItem.appendChild(timestamp);
+        listItem.appendChild(favicon);
+        listItem.appendChild(link);
+        listContainer.appendChild(listItem);
+    }
+});
+```
+
+Change it so that next to each item there is a button that deletes that item from the readingList (and also deletes it from the storage).
