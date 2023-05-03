@@ -1,6 +1,4 @@
-let readingList = [];
-
-function saveTab(tab) {
+function saveTab(tab, readingList) {
     const pageData = {
         title: tab.title,
         url: tab.url,
@@ -13,36 +11,39 @@ function saveTab(tab) {
     readingList.push(pageData);
 
     // Update the storage with the new list
-    chrome.storage.local.set({readingList: readingList});
+    chrome.storage.local.set({readingList});
 }
 
-function saveCurrentTab() {
+async function saveCurrentTab() {
+    const readingList = await getReadingList()
+
     chrome.tabs.query({active: true, currentWindow: true}, tabs => {
         const tab = tabs[0];
-        saveTab(tab);
+        saveTab(tab, readingList);
         chrome.tabs.remove(tab.id);
     });
 }
 
-function saveAllTabs() {
+async function saveAllTabs() {
+    const readingList = await getReadingList()
     chrome.tabs.query({}, tabs => {
         tabs.forEach(tab => {
-            saveTab(tab);
+            saveTab(tab, readingList);
             chrome.tabs.remove(tab.id);
         });
     });
 }
 
-// Initialize the reading list from storage
-chrome.storage.local.get('readingList', data => {
-    console.log(`Initializing: ${JSON.stringify(data)}`)
-    readingList = data.readingList || [];
-});
+async function getReadingList() {
+    const data = await chrome.storage.local.get('readingList')
+    console.log(`Initialized: ${JSON.stringify(data)}`)
+    return data.readingList || []
+}
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if(request.action === 'saveCurrentTab') {
-        saveCurrentTab();
+        await saveCurrentTab();
     } else if(request.action === 'saveAllTabs') {
-        saveAllTabs();
+        await saveAllTabs();
     }
 });

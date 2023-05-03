@@ -44,8 +44,6 @@ chrome.storage.local.get('readingList', data => {
 
         deleteButton.addEventListener('click', () => {
           const filtered = readingList.filter(item => !(item.url === page.url && item.time == page.time));
-          // const index = readingList.findIndex(item => item.url === page.url && item.time == page.time);
-          // readingList.splice(index, 1);
           chrome.storage.local.set({ readingList: filtered });
           listItem.remove();
         });
