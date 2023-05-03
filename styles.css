@@ -1,0 +1,50 @@
+.popup {
+    padding: 10px;
+}
+
+/* Styles for popup.html */
+.popup-button {
+    display: block;
+    margin: 1px 0;
+    padding: 10px 20px;
+    text-decoration: none;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.popup-button:hover {
+    background-color: grey;
+}
+
+/* Styles for timeline.html */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+#list-container {
+    padding: 20px;
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.list-item img {
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+}
+
+.timestamp {
+    font-size: 12px;
+    color: #888;
+    margin-left: 10px;
+}
