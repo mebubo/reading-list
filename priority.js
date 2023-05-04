@@ -8,10 +8,10 @@ function formatTime(timestamp) {
     return `${formatDate(timestamp)} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
-function calculatePriority({times}) {
+function calculatePriority({timestamps}) {
     // Calculate a priority score based on recency and frequency
-    const recencyScore = (Date.now() - Math.max(...times)) / (1000 * 60 * 60 * 24); // days ago
-    return Math.pow(times.length, 2) / recencyScore;
+    const recencyScore = (Date.now() - Math.max(...timestamps)) / (1000 * 60 * 60 * 24); // days ago
+    return Math.pow(timestamps.length, 2) / recencyScore;
 }
 
 chrome.storage.local.get('readingList', data => {
@@ -19,22 +19,7 @@ chrome.storage.local.get('readingList', data => {
     const listContainer = document.getElementById('list-container');
     listContainer.classList.add('priority-view')
 
-    // Group pages by URL and compute frequency and timestamps of each page
-    const pageGroups = readingList.reduce((acc, page) => {
-        if (!acc[page.url]) {
-            acc[page.url] = {
-                title: page.title,
-                url: page.url,
-                favicon: page.favicon,
-                times: [],
-            };
-        }
-        acc[page.url].times.push(page.time);
-        return acc;
-    }, {});
-
-    // Convert to array and add a priority property to each page
-    const pages = Object.values(pageGroups);
+    const pages = readingList
 
     // Add a priority property to each page
     for (const page of pages) {
@@ -48,7 +33,7 @@ chrome.storage.local.get('readingList', data => {
         listItem.classList.add('list-item');
 
         const timestampContainer = document.createElement('div');
-        for (const time of page.times.reverse()) {
+        for (const time of page.timestamps.reverse()) {
             const timestamp = document.createElement('div');
             timestamp.classList.add('timestamp');
             timestamp.textContent = formatTime(time);

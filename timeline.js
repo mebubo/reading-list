@@ -11,7 +11,13 @@ function formatTime(timestamp) {
 chrome.storage.local.get('readingList', data => {
     const readingList = data.readingList || [];
     const listContainer = document.getElementById('list-container');
-    const sortedReadingList = readingList.sort((a, b) => b.time - a.time);
+    const expandedReadingList = []
+    for (x of readingList) {
+        for (time of x.timestamps) {
+            expandedReadingList.push({...x, time})
+        }
+    }
+    const sortedReadingList = expandedReadingList.sort((a, b) => b.time - a.time);
 
     let currentDate = '';
 
@@ -43,9 +49,9 @@ chrome.storage.local.get('readingList', data => {
         deleteButton.textContent = '\u2716';
 
         deleteButton.addEventListener('click', () => {
-          const filtered = readingList.filter(item => !(item.url === page.url && item.time == page.time));
-          chrome.storage.local.set({ readingList: filtered });
-          listItem.remove();
+            const filtered = readingList.filter(item => !(item.url === page.url && item.time == page.time));
+            chrome.storage.local.set({ readingList: filtered });
+            listItem.remove();
         });
 
 
