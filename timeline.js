@@ -8,13 +8,20 @@ function formatTime(timestamp) {
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
-chrome.storage.local.get('readingList', data => {
-    const readingList = data.readingList || [];
+async function getReadingList() {
+    const data = await chrome.storage.local.get('readingList');
+    return data.readingList || [];
+}
+
+async function render() {
+    const readingList = await getReadingList();
     const listContainer = document.getElementById('list-container');
-    const expandedReadingList = []
-    for (page of readingList) {
-        for (time of page.timestamps) {
-            expandedReadingList.push({...page, time})
+    listContainer.innerHTML = '';
+
+    const expandedReadingList = [];
+    for (x of readingList) {
+        for (time of x.timestamps) {
+            expandedReadingList.push({...x, time});
         }
     }
     const sortedReadingList = expandedReadingList.sort((a, b) => b.time - a.time);
@@ -48,14 +55,16 @@ chrome.storage.local.get('readingList', data => {
         deleteButton.classList.add('delete-button');
         deleteButton.textContent = '\u2716';
 
-        deleteButton.addEventListener('click', () => {
-            const filtered = readingList.map(item => {
+        deleteButton.addEventListener('click', async () => {
+            const currentReadingList = await getReadingList();
+
+            const filtered = currentReadingList.map(item => {
                 const filteredTimestamps = item.timestamps.filter(time => !(item.url === page.url && time === page.time));
                 return {...item, timestamps: filteredTimestamps};
             }).filter(item => item.timestamps.length > 0);
 
             chrome.storage.local.set({ readingList: filtered });
-            listItem.remove();
+            render();
         });
 
         listItem.appendChild(deleteButton);
@@ -64,4 +73,6 @@ chrome.storage.local.get('readingList', data => {
         listItem.appendChild(link);
         listContainer.appendChild(listItem);
     }
-});
+}
+
+render();
