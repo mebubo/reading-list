@@ -12,9 +12,9 @@ chrome.storage.local.get('readingList', data => {
     const readingList = data.readingList || [];
     const listContainer = document.getElementById('list-container');
     const expandedReadingList = []
-    for (x of readingList) {
-        for (time of x.timestamps) {
-            expandedReadingList.push({...x, time})
+    for (page of readingList) {
+        for (time of page.timestamps) {
+            expandedReadingList.push({...page, time})
         }
     }
     const sortedReadingList = expandedReadingList.sort((a, b) => b.time - a.time);
@@ -49,11 +49,14 @@ chrome.storage.local.get('readingList', data => {
         deleteButton.textContent = '\u2716';
 
         deleteButton.addEventListener('click', () => {
-            const filtered = readingList.filter(item => !(item.url === page.url && item.time == page.time));
+            const filtered = readingList.map(item => {
+                const filteredTimestamps = item.timestamps.filter(time => !(item.url === page.url && time === page.time));
+                return {...item, timestamps: filteredTimestamps};
+            }).filter(item => item.timestamps.length > 0);
+
             chrome.storage.local.set({ readingList: filtered });
             listItem.remove();
         });
-
 
         listItem.appendChild(deleteButton);
         listItem.appendChild(timestamp);

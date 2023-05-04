@@ -30,7 +30,7 @@ async function saveCurrentTab() {
     chrome.tabs.query({active: true, currentWindow: true}, tabs => {
         const tab = tabs[0];
         saveTab(tab, readingList);
-        chrome.tabs.remove(tab.id);
+        // chrome.tabs.remove(tab.id);
     });
 }
 

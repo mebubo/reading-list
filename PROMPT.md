@@ -20,57 +20,17 @@ the modern javascript features and dom apis, we will rely on those to make code
 more compact and idiomatic, we assume that the extension will
 run only on latest chrome, so there are no concerns about legacy support.
 
-We start with a step-by-step implementation plan, with numbered steps. We list
-filenames and function names, so that we can refer to them later when
-implementing the plan.
+We are not starting from scratch. We have already implemented some functionality, there are a bunch of files in the project directory.
 
-Here is the plan:
+It is very imporant that you take into account the contents of those files, and suggest edits based on what's already there.
 
-1. Manifest File (manifest.json):
+Because you cannot read the files from the filesystem directly, I will paste them here.
 
-Define your manifest file. It's a metadata file in JSON format that contains properties like your extension's name, description, version number and so on. In particular, you need to define:
-"permissions": ["tabs", "storage"]
-"browser_action": to specify default icon and popup
-"background": to specify background scripts
-"action": to specify extension's click behavior
-"web_accessible_resources": to specify HTML files accessible from extension
-"icons": to define extension's icons
-
-2. Background Script (background.js):
-
-Define saveTab(tab) function that saves a given tab's info (title, URL, favicon, and the current time) to the local storage.
-Define saveCurrentTab() function that retrieves the current tab and calls saveTab(tab) on it, then closes the tab.
-Define saveAllTabs() function that retrieves all open tabs, calls saveTab(tab) on each of them, then closes them.
-Listen to chrome.action.onClicked event. When the extension's icon is clicked, open the popup (popup.html).
-
-3. Popup Script (popup.js):
-
-In the popup script, attach event listeners to the buttons for "Save current tab", "Save all tabs", "Show timeline view", "Show priority view".
-These event listeners should send messages to the background script to perform the corresponding actions.
-
-4. Popup Page (popup.html):
-
-Define the HTML for the popup, which should contain buttons for the four actions: "Save current tab", "Save all tabs", "Show timeline view", "Show priority view".
-
-5. Timeline View Page (timeline.html) and corresponding script (timeline.js):
-
-Define the HTML for the timeline view, which should be an empty container that will be filled with JavaScript.
-In timeline.js, retrieve the list of saved pages from the local storage, sort them in reverse chronological order, group them by date, and display them in the container. Each page should be displayed with its timestamp, favicon, and a link with the page title as its text and the page URL as its target.
-
-6. Priority View Page (priority.html) and corresponding script (priority.js):
-
-Define the HTML for the priority view, which should be an empty container that will be filled with JavaScript.
-In priority.js, retrieve the list of saved pages from the local storage, calculate their priority based on recency and frequency, sort them by priority, and display them in the container. Each page should be displayed with its timestamp, favicon, and a link with the page title as its text and the page URL as its target.
-
-7. Storage:
-
-Use Chrome's local storage to store the reading list. The key should be the page URL and the value should be an object containing the page's title, favicon, and an array of timestamps when the page was saved.
-
-What follows are the contents of all the files that we have so far. It is structured as follows:
+What follows are the contents of all the files that we have so far. The structure is as follows.
 
 [filename]:
 ```
-[the contents of the file corresponding to filenam]
+[the contents of the file corresponding to filename]
 ```
 
 For example, if we had a file called `a.txt` which contained the string "hello world", it would be represented like this:
@@ -80,8 +40,8 @@ a.txt:
 hello world
 ```
 
-After the tripple dash, the actual contents of the files follows.
+Read all the code in all the files carefully, it is very important and I know that you can do it. After having finished reading the files, give me the list of the files with an approximate line count next to each filename.
 
-Read them and acknowledge with a simple "ack". I will give you a task later. No handholding. No extra explanations. Short answers and code. We are pros.
+After the tripple dash, the actual contents of the files follows.
 
 ---

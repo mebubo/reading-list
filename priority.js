@@ -19,14 +19,9 @@ chrome.storage.local.get('readingList', data => {
     const listContainer = document.getElementById('list-container');
     listContainer.classList.add('priority-view')
 
-    const pages = readingList
+    const pages = [...readingList]
 
-    // Add a priority property to each page
-    for (const page of pages) {
-        page.priority = calculatePriority(page);
-    }
-
-    const sortedReadingList = pages.sort((a, b) => b.priority - a.priority);
+    const sortedReadingList = pages.sort((a, b) => calculatePriority(b) - calculatePriority(a));
 
     for (const page of sortedReadingList) {
         const listItem = document.createElement('div');
