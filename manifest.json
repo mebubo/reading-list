@@ -13,7 +13,7 @@
     },
     "web_accessible_resources": [
       {
-        "resources": ["timeline.html", "priority.html"],
+        "resources": ["readingList.html"],
         "matches": ["<all_urls>"]
       }
     ]

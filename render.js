@@ -13,8 +13,8 @@ async function getReadingList() {
     return data.readingList || [];
 }
 
-function render(readingList, onDelete, onReadToggle) {
-    const listContainer = document.getElementById('list-container');
+function render(el, readingList, onDelete, onReadToggle) {
+    const listContainer = document.getElementById(el);
     listContainer.innerHTML = '';
 
     for (const page of readingList) {
