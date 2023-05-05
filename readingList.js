@@ -1,3 +1,19 @@
+async function getReadingList() {
+    const data = await chrome.storage.local.get('readingList');
+    return data.readingList || [];
+}
+
+function onLocalStorageChange(fn) {
+
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+        if (areaName === 'local') {
+            if (changes.readingList) {
+                fn(changes.readingList.newValue)
+            }
+        }
+    });
+}
+
 function calculatePriority({timestamps}) {
     const recencyScore = (Date.now() - Math.max(...timestamps)) / (1000 * 60 * 60 * 24);
     return Math.pow(timestamps.length, 2) / recencyScore;
@@ -74,17 +90,27 @@ async function renderTimeline() {
 
 renderTimeline();
 
-function onLocalStorageChange(fn) {
+async function renderReadList() {
+    const readingList = await getReadingList();
+    const readPages = readingList.filter(page => page.read !== null);
 
-    chrome.storage.onChanged.addListener((changes, areaName) => {
-        if (areaName === 'local') {
-            if (changes.readingList) {
-                fn(changes.readingList.newValue)
-            }
-        }
+    // Sort the readPages list based on the 'read' timestamp
+    const sortedReadPages = readPages.sort((a, b) => b.read - a.read);
+
+    render('read', sortedReadPages, async (page) => {
+        const updatedReadingList = readingList.filter(item => item.url !== page.url);
+        await chrome.storage.local.set({readingList: updatedReadingList});
+        renderReadList();
+    }, async (page, isChecked) => {
+        const updatedReadingList = readingList.map(item => item.url === page.url ? {...item, read: isChecked ? new Date().getTime() : null} : item);
+        await chrome.storage.local.set({readingList: updatedReadingList});
+        renderReadList();
     });
-
 }
+
+renderReadList();
+
 
 onLocalStorageChange(renderPriority)
 onLocalStorageChange(renderTimeline)
+onLocalStorageChange(renderReadList)

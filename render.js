@@ -8,11 +8,6 @@ function formatTime(timestamp) {
     return `${formatDate(timestamp)} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
-async function getReadingList() {
-    const data = await chrome.storage.local.get('readingList');
-    return data.readingList || [];
-}
-
 function render(el, readingList, onDelete, onReadToggle) {
     const listContainer = document.getElementById(el);
     listContainer.innerHTML = '';
