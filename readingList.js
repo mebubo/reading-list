@@ -90,12 +90,19 @@ async function renderTimeline() {
 
 renderTimeline();
 
+function expand2(readingList) {
+    const expandedReadingList = [];
+    for (x of readingList) {
+        expandedReadingList.push({...x, timestamps: [x.read]});
+    }
+    return expandedReadingList
+}
+
 async function renderReadList() {
     const readingList = await getReadingList();
     const readPages = readingList.filter(page => page.read !== null);
 
-    // Sort the readPages list based on the 'read' timestamp
-    const sortedReadPages = readPages.sort((a, b) => b.read - a.read);
+    const sortedReadPages = sortByDate(expand2(readPages), false);
 
     render('read', sortedReadPages, async (page) => {
         const updatedReadingList = readingList.filter(item => item.url !== page.url);

@@ -30,17 +30,25 @@ async function saveCurrentTab() {
     chrome.tabs.query({active: true, currentWindow: true}, tabs => {
         const tab = tabs[0];
         saveTab(tab, readingList);
-        // chrome.tabs.remove(tab.id);
+        chrome.tabs.remove(tab.id);
     });
+}
+
+function openReadingList() {
+    const readingListURL = chrome.runtime.getURL("readingList.html");
+
+    chrome.tabs.create({ url: readingListURL });
 }
 
 async function saveAllTabs() {
     const readingList = await getReadingList()
-    chrome.tabs.query({}, tabs => {
-        tabs.forEach(tab => {
-            saveTab(tab, readingList);
-            chrome.tabs.remove(tab.id);
-        });
+    const currentWindow = await chrome.windows.getCurrent();
+    console.log(currentWindow)
+    const tabs = await chrome.tabs.query({ windowId: currentWindow.id });
+    openReadingList()
+    tabs.forEach(tab => {
+        saveTab(tab, readingList);
+        chrome.tabs.remove(tab.id);
     });
 }
 
