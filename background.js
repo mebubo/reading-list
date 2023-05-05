@@ -11,7 +11,7 @@ function saveTab(tab, readingList) {
             title: tab.title,
             url: tab.url,
             favicon: tab.favIconUrl,
-            read: false, // Add a 'read' field, set to false by default
+            read: null, // Add a 'read' field, set to null (not read) by default
             timestamps: [new Date().getTime()] // The 'timestamps' field is now a list
         };
 

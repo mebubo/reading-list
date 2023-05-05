@@ -52,3 +52,7 @@ body {
 .delete-button {
     margin-right: 5px;
 }
+
+.read {
+    opacity: 0.5;
+}

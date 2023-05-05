@@ -39,6 +39,7 @@ async function render() {
 
         const listItem = document.createElement('div');
         listItem.classList.add('list-item');
+        if (page.read !== null) listItem.classList.add('read');
 
         const favicon = document.createElement('img');
         favicon.src = page.favicon;
@@ -67,7 +68,29 @@ async function render() {
             render();
         });
 
+
+        const readCheckbox = document.createElement('input');
+        readCheckbox.type = 'checkbox';
+        readCheckbox.classList.add('read-checkbox');
+        readCheckbox.checked = page.read !== null;
+
+        readCheckbox.addEventListener('change', async () => {
+            const currentReadingList = await getReadingList();
+
+            const updatedReadingList = currentReadingList.map(item => {
+                if (item.url === page.url) {
+                    return {...item, read: readCheckbox.checked ? new Date().getTime() : null};
+                } else {
+                    return item;
+                }
+            });
+
+            chrome.storage.local.set({ readingList: updatedReadingList });
+            render();
+        });
+
         listItem.appendChild(deleteButton);
+        listItem.appendChild(readCheckbox);
         listItem.appendChild(timestamp);
         listItem.appendChild(favicon);
         listItem.appendChild(link);
