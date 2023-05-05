@@ -56,3 +56,7 @@ body {
 .read {
     opacity: 0.5;
 }
+
+.container {
+    padding: 10px;
+}
