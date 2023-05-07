@@ -1,7 +1,8 @@
 import sys
-from transformers import GPT2Tokenizer
+import tiktoken
 
 text = sys.stdin.read()
-tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-tokens = tokenizer.tokenize(text)
+encoder = tiktoken.encoding_for_model("gpt-4")
+
+tokens = encoder.encode(text)
 print(len(tokens))
