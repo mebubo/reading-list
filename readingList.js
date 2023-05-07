@@ -117,7 +117,6 @@ async function renderReadList() {
 
 renderReadList();
 
-
 onLocalStorageChange(renderPriority)
 onLocalStorageChange(renderTimeline)
 onLocalStorageChange(renderReadList)

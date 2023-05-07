@@ -36,7 +36,6 @@ async function saveCurrentTab() {
 
 function openReadingList() {
     const readingListURL = chrome.runtime.getURL("readingList.html");
-
     chrome.tabs.create({ url: readingListURL });
 }
 

@@ -10,11 +10,5 @@
     },
     "background": {
       "service_worker": "background.js"
-    },
-    "web_accessible_resources": [
-      {
-        "resources": ["readingList.html"],
-        "matches": ["<all_urls>"]
-      }
-    ]
+    }
   }
