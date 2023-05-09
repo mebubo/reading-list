@@ -1,1 +1,6 @@
 Now let's modify the existing code that I provided above, to add the possibility to mark and unmark the elements in the reading list as read, use a checkbox for that. While we are at it, let's change the schema of what we store in the reading list: store each url, title, read status and favicon only once, and to each such item associate a list of timestamps when the item was added. Basically do the grouping at the save time instead of at render time.
+
+I'm writing a chrome extension to manage my reading list. For each page that goes into the reading list, I want to store its URL,
+favicon url, page title, the time of the save (needs to be an array, so that a page can be saved multiple times), the time when the page was read (also an array, for every time it was read). This list should be stored locally but also synchronized with a remote database, ideally serverless and free for personal use. I want to be able to add items to the list also from an iphone, without creating an app, by using the share action in the browser on the phone.
+
+Propose the architecture for the extension, the backend, and what setup is needed on the phone. Design the good schema to store the list locally and remotely.
