@@ -38,7 +38,9 @@ async function saveAllTabs() {
     const tabs = await chrome.tabs.query({currentWindow: true});
     openReadingList()
     tabs.forEach(tab => {
-        saveTab(tab, readingList);
+        if (!tab.url.startsWith("chrome-extension://") && !tab.url.startsWith("chrome://")) {
+            saveTab(tab, readingList);
+        }
         chrome.tabs.remove(tab.id);
     });
 }
