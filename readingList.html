@@ -5,19 +5,14 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
     <div class="container">
-        <div>
-            <h1>Priority</h1>
-            <div id="priority"></div>
+        <div class="tabs">
+            <button class="tab" id="priority">Priority</button>
+            <button class="tab" id="timeline">Timeline</button>
+            <button class="tab" id="read">Read</button>
         </div>
-        <div>
-            <h1>Timeline</h1>
-            <div id="timeline"></div>
-        </div>
-        <div>
-            <h1>Read</h1>
-            <div id="read"></div>
-        </div>
+        <div id="content" class="tabcontent"></div>
     </div>
 
     <script src="render.js"></script>

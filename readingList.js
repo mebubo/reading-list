@@ -36,7 +36,7 @@ async function renderPriority(readingList) {
         return priorityB - priorityA;
     });
 
-    render('priority', sortedUnreadPages, async (page) => {
+    render('Priority', 'content', sortedUnreadPages, async (page) => {
         const updatedReadingList = readingList.filter(item => item.url !== page.url);
         await setReadingList(updatedReadingList)
     }, async (page, isChecked) => {
@@ -69,7 +69,7 @@ function expand(readingList) {
 async function renderTimeline(readingList) {
     const sortedReadingList = sortByDate(expand(readingList), false);
 
-    render('timeline', sortedReadingList, async page => {
+    render('Timeline', 'content', sortedReadingList, async page => {
         const updatedReadingList = readingList.map(item => {
             const filteredTimestamps = item.timestamps.filter(time => !(item.url === page.url && time === page.timestamps[0]));
             return {...item, timestamps: filteredTimestamps};
@@ -94,7 +94,7 @@ async function renderReadList(readingList) {
 
     const sortedReadPages = sortByDate(expand2(readPages), false);
 
-    render('read', sortedReadPages, async (page) => {
+    render('Read', 'content', sortedReadPages, async (page) => {
         const updatedReadingList = readingList.filter(item => item.url !== page.url);
         await setReadingList(updatedReadingList)
     }, async (page, isChecked) => {
@@ -103,10 +103,30 @@ async function renderReadList(readingList) {
     });
 }
 
-function renderAll(readingList) {
-    renderPriority(readingList);
-    renderTimeline(readingList);
-    renderReadList(readingList);
+function changeTab(tabId) {
+    const contentDiv = document.getElementById('content');
+    switch (tabId) {
+        case 'priority':
+            subscribeToReadingList(renderPriority)
+            break;
+        case 'timeline':
+            subscribeToReadingList(renderTimeline)
+            break;
+        case 'read':
+            subscribeToReadingList(renderReadList)
+            break;
+        default:
+            console.error(`Invalid tabId: ${tabId}`);
+            break;
+    }
 }
 
-subscribeToReadingList(renderAll)
+changeTab('priority');
+
+function handle(id) {
+    document.getElementById(id).addEventListener("click", () => changeTab(id))
+}
+
+handle('priority')
+handle('timeline')
+handle('read')

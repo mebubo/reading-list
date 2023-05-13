@@ -8,9 +8,13 @@ function formatTime(timestamp) {
     return `${formatDate(timestamp)} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
-function render(el, readingList, onDelete, onReadToggle) {
+function render(heading, el, readingList, onDelete, onReadToggle) {
     const listContainer = document.getElementById(el);
     listContainer.innerHTML = '';
+
+    const h1 = document.createElement('h1')
+    h1.textContent = heading
+    listContainer.appendChild(h1)
 
     for (const page of readingList) {
         const listItem = document.createElement('div');

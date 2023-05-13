@@ -60,3 +60,12 @@ body {
 .container {
     padding: 10px;
 }
+
+.tab {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background-color: #ccc;
+}
