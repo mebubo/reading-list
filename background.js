@@ -1,27 +1,21 @@
+import { getReadingList, setReadingList } from "./storage.js"
+
 function saveTab(tab, readingList) {
-    // Check if the tab is already in the reading list
     const existingEntryIndex = readingList.findIndex(item => item.url === tab.url);
 
     if (existingEntryIndex !== -1) {
-        // If the tab is already in the reading list, just add a new timestamp
         readingList[existingEntryIndex].timestamps.push(new Date().getTime());
     } else {
-        // If the tab is not in the reading list, add a new entry
         const pageData = {
             title: tab.title,
             url: tab.url,
             favicon: tab.favIconUrl,
-            read: null, // Add a 'read' field, set to null (not read) by default
-            timestamps: [new Date().getTime()] // The 'timestamps' field is now a list
+            read: null,
+            timestamps: [new Date().getTime()]
         };
-
-        console.log(`Saving ${JSON.stringify(pageData)}`)
-
         readingList.push(pageData);
     }
-
-    // Update the storage with the new list
-    chrome.storage.local.set({readingList});
+    setReadingList(readingList);
 }
 
 async function saveCurrentTab() {
@@ -49,12 +43,6 @@ async function saveAllTabs() {
         saveTab(tab, readingList);
         chrome.tabs.remove(tab.id);
     });
-}
-
-async function getReadingList() {
-    const data = await chrome.storage.local.get('readingList')
-    console.log(`Initialized: ${JSON.stringify(data)}`)
-    return data.readingList || []
 }
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
