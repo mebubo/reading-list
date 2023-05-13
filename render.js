@@ -22,7 +22,9 @@ export function render(heading, el, readingList, onDelete, onReadToggle) {
         if (page.read !== null) listItem.classList.add('read');
 
         const favicon = document.createElement('img');
-        favicon.src = page.favicon;
+        if (page.favicon) {
+            favicon.src = page.favicon
+        }
 
         const link = document.createElement('a');
         link.href = page.url;
