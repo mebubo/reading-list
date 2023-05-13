@@ -35,9 +35,7 @@ function openReadingList() {
 
 async function saveAllTabs() {
     const readingList = await getReadingList()
-    const currentWindow = await chrome.windows.getCurrent();
-    console.log(currentWindow)
-    const tabs = await chrome.tabs.query({ windowId: currentWindow.id });
+    const tabs = await chrome.tabs.query({currentWindow: true});
     openReadingList()
     tabs.forEach(tab => {
         saveTab(tab, readingList);
