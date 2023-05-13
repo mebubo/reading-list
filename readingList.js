@@ -1,3 +1,5 @@
+import { render } from "./render.js"
+
 async function getReadingList() {
     const { readingList } = await chrome.storage.local.get('readingList');
     return readingList ?? [];
@@ -47,8 +49,8 @@ async function renderPriority(readingList) {
 
 function sortByDate(readingList, ascending = true) {
     const sortedList = [...readingList].sort((a, b) => {
-        ad = a.timestamps[0]
-        bd = b.timestamps[0]
+        const ad = a.timestamps[0]
+        const bd = b.timestamps[0]
         if (ad === bd) return 0;
         return ascending ? ad - bd : bd - ad;
     });
@@ -58,8 +60,8 @@ function sortByDate(readingList, ascending = true) {
 
 function expand(readingList) {
     const expandedReadingList = [];
-    for (x of readingList) {
-        for (time of x.timestamps) {
+    for (const x of readingList) {
+        for (const time of x.timestamps) {
             expandedReadingList.push({...x, timestamps: [time]});
         }
     }
@@ -83,7 +85,7 @@ async function renderTimeline(readingList) {
 
 function expand2(readingList) {
     const expandedReadingList = [];
-    for (x of readingList) {
+    for (const x of readingList) {
         expandedReadingList.push({...x, timestamps: [x.read]});
     }
     return expandedReadingList
