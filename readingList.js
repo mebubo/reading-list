@@ -1,28 +1,5 @@
 import { render } from "./render.js"
-
-async function getReadingList() {
-    const { readingList } = await chrome.storage.local.get('readingList');
-    return readingList ?? [];
-}
-
-function onLocalStorageChange(fn) {
-    chrome.storage.onChanged.addListener((changes, areaName) => {
-        if (areaName === 'local') {
-            if (changes.readingList) {
-                fn(changes.readingList.newValue)
-            }
-        }
-    });
-}
-
-async function setReadingList(readingList) {
-    return await chrome.storage.local.set({readingList});
-}
-
-async function subscribeToReadingList(fn) {
-    fn(await getReadingList())
-    onLocalStorageChange(fn)
-}
+import { subscribeToReadingList, setReadingList } from "./storage.js"
 
 function calculatePriority({timestamps}) {
     const recencyScore = (Date.now() - Math.max(...timestamps)) / (1000 * 60 * 60 * 24);
