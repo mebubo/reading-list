@@ -1,6 +1,6 @@
 async function getReadingList() {
-    const data = await chrome.storage.local.get('readingList');
-    return data.readingList || [];
+    const { readingList } = await chrome.storage.local.get('readingList');
+    return readingList ?? [];
 }
 
 function onLocalStorageChange(fn) {
