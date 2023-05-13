@@ -104,20 +104,19 @@ async function renderReadList(readingList) {
 }
 
 function changeTab(tabId) {
-    const contentDiv = document.getElementById('content');
     switch (tabId) {
         case 'priority':
             subscribeToReadingList(renderPriority)
-            break;
+            break
         case 'timeline':
             subscribeToReadingList(renderTimeline)
-            break;
+            break
         case 'read':
             subscribeToReadingList(renderReadList)
-            break;
+            break
         default:
-            console.error(`Invalid tabId: ${tabId}`);
-            break;
+            console.error(`Invalid tabId: ${tabId}`)
+            break
     }
 }
 
