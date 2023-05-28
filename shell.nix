@@ -33,5 +33,7 @@ in
             tokens-count
             prompt-copy
             prompt-tokens-count
+
+            pocketbase
         ];
     }
