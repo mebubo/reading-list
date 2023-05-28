@@ -1,5 +1,5 @@
 import { render } from "./render.js"
-import { subscribeToReadingList, setReadingList } from "./storage.js"
+import { api } from "./storage.js"
 
 function calculatePriority({timestamps}) {
     const recencyScore = (Date.now() - Math.max(...timestamps)) / (1000 * 60 * 60 * 24);
@@ -18,10 +18,10 @@ async function renderPriority(readingList) {
 
     render('Priority', 'content', sortedUnreadPages, async (page) => {
         const updatedReadingList = readingList.filter(item => item.url !== page.url);
-        await setReadingList(updatedReadingList)
+        await api.setReadingList(updatedReadingList)
     }, async (page, isChecked) => {
         const updatedReadingList = readingList.map(item => item.url === page.url ? {...item, read: isChecked ? new Date().getTime() : null} : item);
-        await setReadingList(updatedReadingList)
+        await api.setReadingList(updatedReadingList)
     });
 }
 
@@ -55,10 +55,10 @@ async function renderTimeline(readingList) {
             const filteredTimestamps = item.timestamps.filter(time => !(item.url === page.url && time === page.timestamps[0]));
             return {...item, timestamps: filteredTimestamps};
         }).filter(item => item.timestamps.length > 0);
-        await setReadingList(updatedReadingList)
+        await api.setReadingList(updatedReadingList)
     }, async (page, isChecked) => {
         const updatedReadingList = readingList.map(item => item.url === page.url ? { ...item, read: isChecked ? new Date().getTime() : null } : item);
-        await setReadingList(updatedReadingList)
+        await api.setReadingList(updatedReadingList)
     });
 }
 
@@ -78,23 +78,23 @@ async function renderReadList(readingList) {
 
     render('Read', 'content', sortedReadPages, async (page) => {
         const updatedReadingList = readingList.filter(item => item.url !== page.url);
-        await setReadingList(updatedReadingList)
+        await api.setReadingList(updatedReadingList)
     }, async (page, isChecked) => {
         const updatedReadingList = readingList.map(item => item.url === page.url ? {...item, read: isChecked ? new Date().getTime() : null} : item);
-        await setReadingList(updatedReadingList)
+        await api.setReadingList(updatedReadingList)
     });
 }
 
 function changeTab(tabId) {
     switch (tabId) {
         case 'priority':
-            subscribeToReadingList(renderPriority)
+            api.subscribeToReadingList(renderPriority)
             break
         case 'timeline':
-            subscribeToReadingList(renderTimeline)
+            api.subscribeToReadingList(renderTimeline)
             break
         case 'read':
-            subscribeToReadingList(renderReadList)
+            api.subscribeToReadingList(renderReadList)
             break
         default:
             console.error(`Invalid tabId: ${tabId}`)
