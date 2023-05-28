@@ -7,6 +7,7 @@ function calculatePriority({timestamps}) {
 }
 
 async function renderPriority(readingList) {
+    console.log("renderPriority")
     const unreadPages = readingList.filter(page => page.read === null);
 
     const sortedUnreadPages = unreadPages.sort((a, b) => {
@@ -46,6 +47,7 @@ function expand(readingList) {
 }
 
 async function renderTimeline(readingList) {
+    console.log("renderTimeline")
     const sortedReadingList = sortByDate(expand(readingList), false);
 
     render('Timeline', 'content', sortedReadingList, async page => {
@@ -69,6 +71,7 @@ function expand2(readingList) {
 }
 
 async function renderReadList(readingList) {
+    console.log("renderReadingList")
     const readPages = readingList.filter(page => page.read !== null);
 
     const sortedReadPages = sortByDate(expand2(readPages), false);
