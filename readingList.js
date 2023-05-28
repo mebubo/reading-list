@@ -16,13 +16,10 @@ async function renderPriority(readingList) {
         return priorityB - priorityA;
     });
 
-    render('Priority', 'content', sortedUnreadPages, async (page) => {
-        const updatedReadingList = readingList.filter(item => item.url !== page.url);
-        await api.setReadingList(updatedReadingList)
-    }, async (page, isChecked) => {
-        const updatedReadingList = readingList.map(item => item.url === page.url ? {...item, read: isChecked ? new Date().getTime() : null} : item);
-        await api.setReadingList(updatedReadingList)
-    });
+    render('Priority', 'content', sortedUnreadPages,
+        async page => await api.markDeleted(page.url),
+        async (page, isChecked) => await api.setCheckedStatus(page.url, isChecked)
+    );
 }
 
 function sortByDate(readingList, ascending = true) {
@@ -50,16 +47,10 @@ async function renderTimeline(readingList) {
     console.log("renderTimeline")
     const sortedReadingList = sortByDate(expand(readingList), false);
 
-    render('Timeline', 'content', sortedReadingList, async page => {
-        const updatedReadingList = readingList.map(item => {
-            const filteredTimestamps = item.timestamps.filter(time => !(item.url === page.url && time === page.timestamps[0]));
-            return {...item, timestamps: filteredTimestamps};
-        }).filter(item => item.timestamps.length > 0);
-        await api.setReadingList(updatedReadingList)
-    }, async (page, isChecked) => {
-        const updatedReadingList = readingList.map(item => item.url === page.url ? { ...item, read: isChecked ? new Date().getTime() : null } : item);
-        await api.setReadingList(updatedReadingList)
-    });
+    render('Timeline', 'content', sortedReadingList,
+        async page => await api.markDeletedAtTimestamp(page.url, page.timestamps[0]),
+        async (page, isChecked) => await api.setCheckedStatus(page.url, isChecked)
+    );
 }
 
 function expand2(readingList) {
@@ -76,13 +67,10 @@ async function renderReadList(readingList) {
 
     const sortedReadPages = sortByDate(expand2(readPages), false);
 
-    render('Read', 'content', sortedReadPages, async (page) => {
-        const updatedReadingList = readingList.filter(item => item.url !== page.url);
-        await api.setReadingList(updatedReadingList)
-    }, async (page, isChecked) => {
-        const updatedReadingList = readingList.map(item => item.url === page.url ? {...item, read: isChecked ? new Date().getTime() : null} : item);
-        await api.setReadingList(updatedReadingList)
-    });
+    render('Read', 'content', sortedReadPages,
+        async page => await api.markDeleted(page.url),
+        async (page, isChecked) => await api.setCheckedStatus(page.url, isChecked)
+    );
 }
 
 function changeTab(tabId) {

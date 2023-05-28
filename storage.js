@@ -31,14 +31,37 @@ async function saveToReadingList({url, title, favIconUrl}) {
         };
         readingList.push(pageData);
     }
-    await api.setReadingList(readingList);
+    await setReadingList(readingList);
+}
+
+async function markDeleted(url) {
+    const readingList = await getReadingList()
+    const updatedReadingList = readingList.filter(item => item.url !== url);
+    await setReadingList(updatedReadingList)
+}
+
+async function markDeletedAtTimestamp(url, timestamp) {
+    const readingList = await getReadingList()
+    const updatedReadingList = readingList.map(item => {
+        const filteredTimestamps = item.timestamps.filter(time => !(item.url === url && time === timestamp));
+        return {...item, timestamps: filteredTimestamps};
+    }).filter(item => item.timestamps.length > 0);
+    await setReadingList(updatedReadingList)
+}
+
+async function setCheckedStatus(url, isChecked) {
+    const readingList = await getReadingList()
+    const updatedReadingList = readingList.map(item => item.url === url ? {...item, read: isChecked ? new Date().getTime() : null} : item);
+    await setReadingList(updatedReadingList)
 }
 
 const localStorageAPI = {
     subscribeToReadingList,
-    setReadingList,
     getReadingList,
-    saveToReadingList
+    saveToReadingList,
+    markDeleted,
+    markDeletedAtTimestamp,
+    setCheckedStatus
 }
 
 export const api = localStorageAPI
