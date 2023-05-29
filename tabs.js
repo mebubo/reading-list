@@ -4,7 +4,7 @@ async function saveTab(tab) {
     await api.saveToReadingList(tab)
 }
 
-async function saveCurrentTab() {
+export async function saveCurrentTab() {
     chrome.tabs.query({active: true, currentWindow: true}, async tabs => {
         const tab = tabs[0];
         await saveTab(tab);
@@ -12,12 +12,12 @@ async function saveCurrentTab() {
     });
 }
 
-function openReadingList() {
+export function openReadingList() {
     const readingListURL = chrome.runtime.getURL("readingList.html");
     chrome.tabs.create({ url: readingListURL });
 }
 
-async function saveAllTabs() {
+export async function saveAllTabs() {
     const tabs = await chrome.tabs.query({currentWindow: true});
     openReadingList()
     for (const tab of tabs) {
@@ -27,11 +27,3 @@ async function saveAllTabs() {
         chrome.tabs.remove(tab.id);
     }
 }
-
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-    if(request.action === 'saveCurrentTab') {
-        await saveCurrentTab();
-    } else if(request.action === 'saveAllTabs') {
-        await saveAllTabs();
-    }
-});

@@ -7,9 +7,5 @@
     "action": {
       "default_popup": "popup.html",
       "default_title": "Manage Reading List"
-    },
-    "background": {
-      "service_worker": "background.js",
-      "type": "module"
     }
   }

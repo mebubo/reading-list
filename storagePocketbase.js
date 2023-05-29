@@ -6,13 +6,29 @@ async function login() {
     const authData = await pb.collection('users').authWithPassword('bbb', '11111');
 }
 
+async function getReadingList() {
+    // await login()
+    const items = await pb.collection("reading_list").getFullList()
+    console.log(items)
+    const entries = items.map(i => i.entry)
+    return entries
+}
+
+async function subscribeToReadingList(fn) {
+    fn(await getReadingList())
+}
+
 async function createRecord(data) {
     const record = await pb.collection('reading_list').create(data);
     console.log(record)
 }
 
 async function saveToReadingList({url, title, favIconUrl}) {
-    await login()
+    // await login()
+
+    console.log(pb.authStore.isValid);
+    console.log(pb.authStore.token);
+    console.log(pb.authStore.model?.id);
 
     const items = await pb.collection("reading_list").getList(1, 50, {
         filter: `entry.url = "${url}"`
@@ -41,7 +57,7 @@ async function saveToReadingList({url, title, favIconUrl}) {
         };
         const pageData = {
             entry,
-            user_id: pb.authStore.model.id
+            user_id: pb.authStore.model?.id
         }
         await createRecord(pageData);
     }
@@ -50,8 +66,8 @@ async function saveToReadingList({url, title, favIconUrl}) {
 const stub = () => {}
 
 export const api = {
-    subscribeToReadingList: stub,
-    getReadingList: stub,
+    subscribeToReadingList,
+    getReadingList,
     saveToReadingList,
     markDeleted: stub,
     markDeletedAtTimestamp: stub,

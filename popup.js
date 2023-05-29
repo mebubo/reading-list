@@ -1,11 +1,7 @@
-document.getElementById('save-current-tab').addEventListener('click', () => {
-    chrome.runtime.sendMessage({action: 'saveCurrentTab'});
-});
+import { saveCurrentTab, saveAllTabs, openReadingList } from "./tabs.js"
 
-document.getElementById('save-all-tabs').addEventListener('click', () => {
-    chrome.runtime.sendMessage({action: 'saveAllTabs'});
-});
+document.getElementById('save-current-tab').addEventListener('click', () => saveCurrentTab());
 
-document.getElementById('show-reading-list').addEventListener('click', () => {
-    chrome.tabs.create({url: 'readingList.html'});
-});
+document.getElementById('save-all-tabs').addEventListener('click', () => saveAllTabs());
+
+document.getElementById('show-reading-list').addEventListener('click', () => openReadingList());
