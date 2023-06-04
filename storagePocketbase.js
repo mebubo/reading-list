@@ -7,7 +7,6 @@ async function login() {
 }
 
 async function getReadingList() {
-    // await login()
     const items = await pb.collection("reading_list").getFullList()
     console.log(items)
     const entries = items.map(i => i.entry)
@@ -15,7 +14,16 @@ async function getReadingList() {
 }
 
 async function subscribeToReadingList(fn) {
-    fn(await getReadingList())
+    async function refresh() {
+        const rl = await getReadingList()
+        console.log("nnn", rl)
+        fn(rl)
+    }
+    pb.collection('reading_list').subscribe('*', async e => {
+        console.log("eee", e)
+        await refresh()
+    });
+    await refresh()
 }
 
 async function createRecord(data) {
@@ -24,8 +32,6 @@ async function createRecord(data) {
 }
 
 async function saveToReadingList({url, title, favIconUrl}) {
-    // await login()
-
     console.log(pb.authStore.isValid);
     console.log(pb.authStore.token);
     console.log(pb.authStore.model?.id);
@@ -97,8 +103,6 @@ async function setCheckedStatus(url, isChecked) {
     const entry = {...record.entry, read: isChecked ? new Date().getTime() : null }
     return await updateRecord(record.id, { entry })
 }
-
-const stub = () => {}
 
 export const api = {
     subscribeToReadingList,

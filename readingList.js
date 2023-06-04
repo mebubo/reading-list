@@ -1,14 +1,44 @@
-// import { render } from "./render.js"
-import { renderPreact as render } from "./renderPreact.js"
+import { h, render } from './vendor/preact-10-15-1.js'
+import { useState, useEffect } from './vendor/preact-hooks-10-15-1.js'
+import htm from './vendor/htm-3-1-1.js'
+import { formatTime } from './lib.js'
 import { api } from "./storage.js"
+import { calculatePriority, sortByDate } from './lib.js'
 
-function calculatePriority({timestamps}) {
-    const recencyScore = (Date.now() - Math.max(...timestamps)) / (1000 * 60 * 60 * 24);
-    return Math.pow(timestamps.length, 2) / recencyScore;
+const html = htm.bind(h);
+
+function Timestamps(props) {
+    return html`
+        <div>
+            ${props.timestamps.map(t => html`<div class="timestamp">${formatTime(t)}</div>`)}
+        </div>
+    `
 }
 
-async function renderPriority(readingList) {
-    console.log("renderPriority")
+function ListItem(props) {
+    return html`
+    <div class="list-item ${props.read && "read"}">
+        <button class="delete-button" onClick="${() => props.onDelete(props)}">\u2716</button>
+        <input type="checkbox" class="read-checkbox" checked="${!!props.read}"
+            onClick="${e => props.onReadToggle(props, e.target.checked)}"/>
+        <${Timestamps} timestamps="${props.timestamps}" />
+        <img src=${props.favicon}/>
+        <a href="${props.url}">${props.title}</a>
+    </div>
+    `
+}
+
+function ReadingList(props) {
+    console.log(props.readingList)
+    return html`
+    <h1>${props.heading}</h1>
+    ${props.readingList.map(i => html`<${ListItem} ...${i}
+        onDelete="${props.onDelete}" onReadToggle="${props.onReadToggle}" />`)}
+    `;
+}
+
+function Priority({ readingList }) {
+    console.log("renderPriority", readingList)
     const unreadPages = readingList.filter(page => page.read === null);
 
     const sortedUnreadPages = unreadPages.sort((a, b) => {
@@ -17,21 +47,13 @@ async function renderPriority(readingList) {
         return priorityB - priorityA;
     });
 
-    render('Priority', 'content', sortedUnreadPages,
-        async page => await api.markDeleted(page.url),
-        async (page, isChecked) => await api.setCheckedStatus(page.url, isChecked)
-    );
-}
+    const onDelete = async page => await api.markDeleted(page.url)
+    const onReadToggle = async (page, isChecked) => await api.setCheckedStatus(page.url, isChecked)
 
-function sortByDate(readingList, ascending = true) {
-    const sortedList = [...readingList].sort((a, b) => {
-        const ad = a.timestamps[0]
-        const bd = b.timestamps[0]
-        if (ad === bd) return 0;
-        return ascending ? ad - bd : bd - ad;
-    });
-
-    return sortedList;
+    return html`
+        <${ReadingList} heading="Priority" readingList="${sortedUnreadPages}"
+            onDelete="${onDelete}" onReadToggle="${onReadToggle}" />
+    `
 }
 
 function expand(readingList) {
@@ -44,16 +66,6 @@ function expand(readingList) {
     return expandedReadingList
 }
 
-async function renderTimeline(readingList) {
-    console.log("renderTimeline")
-    const sortedReadingList = sortByDate(expand(readingList), false);
-
-    render('Timeline', 'content', sortedReadingList,
-        async page => await api.markDeletedAtTimestamp(page.url, page.timestamps[0]),
-        async (page, isChecked) => await api.setCheckedStatus(page.url, isChecked)
-    );
-}
-
 function expand2(readingList) {
     const expandedReadingList = [];
     for (const x of readingList) {
@@ -62,41 +74,58 @@ function expand2(readingList) {
     return expandedReadingList
 }
 
-async function renderReadList(readingList) {
-    console.log("renderReadingList")
+function Timeline({ readingList }) {
+    const sortedReadingList = sortByDate(expand(readingList), false);
+
+    const onDelete = async page => await api.markDeletedAtTimestamp(page.url, page.timestamps[0])
+    const onReadToggle = async (page, isChecked) => await api.setCheckedStatus(page.url, isChecked)
+
+    return html`
+        <${ReadingList} heading="Timeline" readingList="${sortedReadingList}"
+            onDelete="${onDelete}" onReadToggle="${onReadToggle}" />
+    `
+}
+
+
+function ReadList({ readingList }) {
     const readPages = readingList.filter(page => page.read !== null);
 
     const sortedReadPages = sortByDate(expand2(readPages), false);
 
-    render('Read', 'content', sortedReadPages,
-        async page => await api.markDeleted(page.url),
-        async (page, isChecked) => await api.setCheckedStatus(page.url, isChecked)
-    );
+    const onDelete = async page => await api.markDeleted(page.url)
+    const onReadToggle = async (page, isChecked) => await api.setCheckedStatus(page.url, isChecked)
+
+    return html`
+        <${ReadingList} heading="Read" readingList="${sortedReadPages}"
+            onDelete="${onDelete}" onReadToggle="${onReadToggle}" />
+    `
 }
 
-function changeTab(tabId) {
-    switch (tabId) {
-        case 'priority':
-            api.subscribeToReadingList(renderPriority)
-            break
-        case 'timeline':
-            api.subscribeToReadingList(renderTimeline)
-            break
-        case 'read':
-            api.subscribeToReadingList(renderReadList)
-            break
-        default:
-            console.error(`Invalid tabId: ${tabId}`)
-            break
-    }
+function App() {
+
+    const [activeTab, setActiveTab] = useState("priority")
+    const [readingList, setReadingList] = useState([])
+
+    useEffect(() => {
+        api.subscribeToReadingList(rl => setReadingList(rl))
+        return () => {}
+    }, []);
+
+    return html`
+        <div class="tabs">
+            <button class="tab" id="priority" onClick="${() => setActiveTab("priority")}">Priority</button>
+            <button class="tab" id="timeline" onClick="${() => setActiveTab("timeline")}">Timeline</button>
+            <button class="tab" id="read" onClick="${() => setActiveTab("read-list")}">Read</button>
+        </div>
+        ${ activeTab == "priority" && html`<${Priority} readingList="${readingList}"/>`}
+        ${ activeTab == "timeline" && html`<${Timeline} readingList="${readingList}"/>`}
+        ${ activeTab == "read-list" && html`<${ReadList} readingList="${readingList}"/>`}
+    `;
 }
 
-changeTab('priority');
-
-function handle(id) {
-    document.getElementById(id).addEventListener("click", () => changeTab(id))
+function renderApp(readingList) {
+    const container = document.getElementById("container");
+    render(html`<${App} readingList="${readingList}" />`, container);
 }
 
-handle('priority')
-handle('timeline')
-handle('read')
+renderApp()
