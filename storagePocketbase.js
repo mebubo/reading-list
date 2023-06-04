@@ -63,13 +63,48 @@ async function saveToReadingList({url, title, favIconUrl}) {
     }
 }
 
+async function getRecord(url) {
+    return await pb.collection('reading_list').getFirstListItem(`entry.url = "${url}"`)
+}
+
+async function updateRecord(id, record) {
+    return await pb.collection('reading_list').update(id, record)
+}
+
+async function deleteRecord(id) {
+    return await pb.collection('reading_list').delete(id)
+}
+
+async function markDeleted(url) {
+    const record = await getRecord(url)
+    return await deleteRecord(record.id)
+}
+
+async function markDeletedAtTimestamp(url, timestamp) {
+    const record = await getRecord(url)
+    const item = record.entry
+    const filteredTimestamps = item.timestamps.filter(time => !(item.url === url && time === timestamp));
+    if (filteredTimestamps.length == 0) {
+        return await deleteRecord(record.id)
+    } else {
+        const entry = {...item, timestamps: filteredTimestamps}
+        return await updateRecord(record.id, { entry })
+    }
+}
+
+async function setCheckedStatus(url, isChecked) {
+    const record = await getRecord(url)
+    const entry = {...record.entry, read: isChecked ? new Date().getTime() : null }
+    return await updateRecord(record.id, { entry })
+}
+
 const stub = () => {}
 
 export const api = {
     subscribeToReadingList,
     getReadingList,
     saveToReadingList,
-    markDeleted: stub,
-    markDeletedAtTimestamp: stub,
-    setCheckedStatus: stub
+    markDeleted,
+    markDeletedAtTimestamp,
+    setCheckedStatus
 }
