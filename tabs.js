@@ -12,9 +12,9 @@ export async function saveCurrentTab() {
     });
 }
 
-export function openReadingList() {
+export async function openReadingList() {
     const readingListURL = chrome.runtime.getURL("readingList.html");
-    chrome.tabs.create({ url: readingListURL });
+    await chrome.tabs.create({ url: readingListURL });
 }
 
 export async function saveAllTabs() {
