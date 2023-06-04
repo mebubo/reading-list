@@ -19,11 +19,11 @@ export function openReadingList() {
 
 export async function saveAllTabs() {
     const tabs = await chrome.tabs.query({currentWindow: true});
-    openReadingList()
+    // openReadingList()
     for (const tab of tabs) {
         if (!tab.url.startsWith("chrome-extension://") && !tab.url.startsWith("chrome://")) {
             await saveTab(tab);
+            chrome.tabs.remove(tab.id);
         }
-        chrome.tabs.remove(tab.id);
     }
 }
