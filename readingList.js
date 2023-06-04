@@ -1,4 +1,5 @@
-import { render } from "./render.js"
+// import { render } from "./render.js"
+import { renderPreact as render } from "./renderPreact.js"
 import { api } from "./storage.js"
 
 function calculatePriority({timestamps}) {
