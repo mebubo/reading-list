@@ -69,6 +69,14 @@ async function saveToReadingList({url, title, favIconUrl}) {
     }
 }
 
+export async function saveEntry(entry) {
+    const pageData = {
+        entry,
+        user_id: pb.authStore.model?.id
+    }
+    await createRecord(pageData);
+}
+
 async function getRecord(url) {
     return await pb.collection('reading_list').getFirstListItem(`entry.url = "${url}"`)
 }
