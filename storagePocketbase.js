@@ -2,9 +2,16 @@ import PocketBase from './vendor/pocketbase-0.15.0.es.js'
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 
-async function login() {
-    const authData = await pb.collection('users').authWithPassword('bbb', '11111');
+async function login(username = "bbb", password = '11111') {
+    const authData = await pb.collection('users').authWithPassword(username, password);
 }
+
+async function logout() {
+    return await pb.authStore.clear()
+}
+
+window.login = login
+window.logout = logout
 
 async function getReadingList() {
     const items = await pb.collection("reading_list").getFullList()
@@ -112,11 +119,18 @@ async function setCheckedStatus(url, isChecked) {
     return await updateRecord(record.id, { entry })
 }
 
+function isLoggedIn() {
+    return pb.authStore.isValid
+}
+
 export const api = {
     subscribeToReadingList,
     getReadingList,
     saveToReadingList,
     markDeleted,
     markDeletedAtTimestamp,
-    setCheckedStatus
+    setCheckedStatus,
+    isLoggedIn,
+    login,
+    logout
 }

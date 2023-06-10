@@ -101,7 +101,7 @@ function ReadList({ readingList }) {
     `
 }
 
-function App() {
+function Home() {
 
     const [activeTab, setActiveTab] = useState("priority")
     const [readingList, setReadingList] = useState([])
@@ -123,9 +123,48 @@ function App() {
     `;
 }
 
-function renderApp(readingList) {
-    const container = document.getElementById("container");
-    render(html`<${App} readingList="${readingList}" />`, container);
+function App() {
+    const isLoggedIn = api.isLoggedIn()
+
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
+    const [isLoading, setLoading] = useState(false)
+
+    async function handleLogin(e) {
+        e.preventDefault()
+        setLoading(true)
+        await api.login(username, password)
+        setUsername("")
+        setPassword("")
+        setLoading(false)
+    }
+
+    async function handleLogout(e) {
+        setLoading(true)
+        await api.logout()
+        setLoading(false)
+    }
+
+    const loginScreen =  html`
+        ${isLoading && html`<p>Loading ...</p>`}
+        <form onSubmit="${handleLogin}">
+            <input type="text" placeholder="user@example.com" value="${username}" onChange="${e => setUsername(e.target.value)}"/>
+            <input type="password" value="${password}" onChange="${e => setPassword(e.target.value)}"/>
+            <button type="submit" disabled="${isLoading}">${isLoading ? "Loading" : "Login"}</button>
+        </form>
+    `
+    const app = isLoggedIn ? html`<${Home} />` : loginScreen
+
+    return html`
+        <h1>Logged in: ${isLoggedIn.toString()}</h1>
+        ${isLoggedIn && html`<button onClick="${handleLogout}">Logout</button>`}
+        ${app}
+    `
+
+}
+
+function renderApp() {
+    render(html`<${App} />`, document.getElementById("container"))
 }
 
 renderApp()
