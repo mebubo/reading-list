@@ -1,8 +1,9 @@
 import PocketBase from './vendor/pocketbase-0.15.0.es.js'
 
-const pb = new PocketBase('http://127.0.0.1:8090');
+// const pb = new PocketBase('http://127.0.0.1:8090');
+const pb = new PocketBase('http://192.168.1.21:8090');
 
-async function login(username = "bbb", password = '11111') {
+async function login(username, password) {
     const authData = await pb.collection('users').authWithPassword(username, password);
 }
 
