@@ -1,4 +1,4 @@
-import PocketBase from './vendor/pocketbase-0.15.0.es.js'
+import PocketBase from './vendor/pocketbase.js'
 
 // const pb = new PocketBase('http://127.0.0.1:8090');
 const pb = new PocketBase('http://192.168.1.21:8090');

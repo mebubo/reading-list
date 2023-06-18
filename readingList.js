@@ -1,6 +1,6 @@
-import { h, render } from './vendor/preact-10-15-1.js'
-import { useState, useEffect } from './vendor/preact-hooks-10-15-1.js'
-import htm from './vendor/htm-3-1-1.js'
+import { h, render } from './vendor/preact.js'
+import { useState, useEffect } from './vendor/preact-hooks.js'
+import htm from './vendor/htm.js'
 import { formatTime } from './lib.js'
 import { api } from "./storage.js"
 import { calculatePriority, sortByDate } from './lib.js'
