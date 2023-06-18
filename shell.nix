@@ -22,6 +22,15 @@ let
     prompt-tokens-count = pkgs.writeShellScriptBin "prompt-tokens-count" ''
         ${prompt-generate}/bin/prompt-generate | ${tokens-count}/bin/tokens-count
     '';
+
+    pocketbase-serve-localhost = pkgs.writeShellScriptBin "pocketbase-serve-localhost" ''
+        PATH=$PATH:${pkgs.pocketbase}/bin/ pocketbase serve
+    '';
+
+    pocketbase-serve = pkgs.writeShellScriptBin "pocketbase-serve" ''
+        PATH=$PATH:${pkgs.pocketbase}/bin/ pocketbase serve --http 0.0.0.0:8090
+    '';
+
 in
 
     pkgs.mkShell {
@@ -35,5 +44,7 @@ in
             prompt-tokens-count
 
             pocketbase
+            pocketbase-serve
+            pocketbase-serve-localhost
         ];
     }
