@@ -19,6 +19,8 @@ General principles
 - Use modern javascript features and DOM APIs
 - No build step
     - Use ES modules
+- Only use small libraries with close to zero dependencies
+    - Currently: pocketbase, preact, preact-hooks, htm
 
 TODO
 
