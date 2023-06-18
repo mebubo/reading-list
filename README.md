@@ -13,7 +13,7 @@ A chrome extension to manage a list of pages to read, with the following feature
 - There is a Read view that displays only read items in the reverse chronological order based on when they were marked as read
 - Two backends are supported: local storage and Pocketbase
 
-General principles
+## General principles
 
 - Vanilla javascript
 - Use modern javascript features and DOM APIs
@@ -22,7 +22,29 @@ General principles
 - Only use small libraries with close to zero dependencies
     - Currently: pocketbase, preact, preact-hooks, htm
 
-TODO
+## Initial dev setup
+
+Download js:
+
+```sh
+bash utils/download-js.sh
+```
+
+Install pocketbase.
+
+Start pocketbase:
+
+```sh
+pocketbase serve
+```
+
+Login to Pocketbase UI and create a user and the 'reading_list' table with 2 non-system columns:
+- user_id: a 'single' relation to the users table
+- entry: JSON
+
+Load the extension into chrome.
+
+## TODO
 
 - [ ] Unbreak the local storage backend (has been broken when adding pocketbase login)
 - [ ] Possibility to manually bump / decrease priority
@@ -42,7 +64,7 @@ TODO
     - The current views in `readingList.{js,html}` are not really tied to any extension APIs, it's easy to turn them to a web page, just need to figure out how to deploy well
 - [ ] Add in-page js filter for lists in every view
 
-Bigger future features
+## Bigger future features
 
 - Extract the text of every read page, save it together with computed embeddings
     - To enable semantic search over the read content
